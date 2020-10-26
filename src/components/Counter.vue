@@ -1,11 +1,13 @@
 <template>
 	<div class="counter">
 		<h1 v-html="value" />
-		<button
-			@click.prevent="increment()"
-			v-html="'Increment'"
-			style="font-size: 1.25em"
-		/>
+    <v-btn
+        @click.prevent="increment()"
+        v-html="'Increment'"
+        style="font-size: 1.25em"
+    >
+    </v-btn>
+
 	</div>
 </template>
 

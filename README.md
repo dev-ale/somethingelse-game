@@ -3,12 +3,20 @@
 # somethingelse `fhnw sdent game`
 
 
-## Usage
-
-Run `npm run serve` and `node server` for development, run `npm run build` and `node server` for production.
+### Usage
 
 
-## Deploy to Heroku
+for development
+- Run `npm run serve` and `node server` for development
+
+
+for production
+- Run `npm run build` and `node server` for production.
+
+
+
+
+### Deploy to Heroku
 
 - Merge it to Heroku Branch
 
