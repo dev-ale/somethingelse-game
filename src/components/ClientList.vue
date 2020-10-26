@@ -1,6 +1,6 @@
 <template>
 	<div class="clients">
-		<h3 v-html="'Connected clients'" />
+		<h3 v-html=" clients.length + ' Connected clients'" />
 		<span
 			v-if="clients.length == 0"
 			v-html="'No connected clients.'"
