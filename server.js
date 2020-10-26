@@ -50,6 +50,12 @@ io.on('connection', (socket) => {
 		io.emit('update_counter', counter)
 	})
 
+	// Listen to reset_counter event, fired by `reset()` in 'Counter.vue'
+	socket.on('reset_counter', () => {
+		counter = 0
+		io.emit('update_counter', counter)
+	})
+
 	// Listen to disconnect event. 'disconnecting' is a reserved event,
 	// again refer to https://socket.io/docs/emit-cheatsheet/
 	socket.on('disconnecting', () => {
