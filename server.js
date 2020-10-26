@@ -17,7 +17,7 @@ http.listen(port, () => {
 	console.log(`Listening on port ${port}`)
 })
 
-
+const FPS = 10
 const wCap = new cv.VideoCapture(0)
 wCap.set(cv.CAP_PROP_FRAME_WIDTH, 200)
 wCap.set(cv.CAP_PROP_FRAME_HEIGHT, 200)
@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
 		const frame = wCap.read()
 		const image = cv.imencode('.jpg', frame).toString('base64')
 		io.emit('image',image)
-	}, 1000)
+	}, 1000 / FPS)
 
 	// Emit Brick Position
 	socket.emit("position", position);
