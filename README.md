@@ -11,3 +11,6 @@ Run `npm run serve` and `node server` for development, run `npm run build` and `
 ## Deploy to Heroku
 
 - Merge it to Heroku Branch
+
+## Live Demo
+https://sdent-somethingelse.herokuapp.com/
