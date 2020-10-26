@@ -6,18 +6,16 @@
           v-html="`Connected: ${isConnected}`"
       />
       <ClientList />
-<!--      <Counter />-->
-<!--      <BlockGame/>-->
-      <VideoStream/>
+      <Counter />
+      <BlockGame/>
     </div>
   </div>
 </template>
 
 <script>
 import ClientList from './components/ClientList.vue'
-//import Counter from './components/Counter.vue'
-//import BlockGame from "@/components/BlockGame";
-import VideoStream from "@/components/VideoStream";
+import Counter from './components/Counter.vue'
+import BlockGame from "@/components/BlockGame";
 export default {
   name: 'App',
   data() {
@@ -26,10 +24,9 @@ export default {
     }
   },
   components: {
-    //BlockGame,
+    BlockGame,
     ClientList,
-    //Counter,
-    VideoStream
+    Counter
   },
   sockets: {
     /*
