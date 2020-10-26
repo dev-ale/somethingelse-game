@@ -7,6 +7,7 @@
       />
       <ClientList />
       <Counter />
+      <BlockGame/>
     </div>
   </div>
 </template>
@@ -14,6 +15,7 @@
 <script>
 import ClientList from './components/ClientList.vue'
 import Counter from './components/Counter.vue'
+import BlockGame from "@/components/BlockGame";
 export default {
   name: 'App',
   data() {
@@ -22,6 +24,7 @@ export default {
     }
   },
   components: {
+    BlockGame,
     ClientList,
     Counter
   },

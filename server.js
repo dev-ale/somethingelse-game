@@ -23,6 +23,14 @@ http.listen(port, () => {
 var clients = []
 var counter = 0
 
+/*
+ * Init Position of the Brick
+ */
+var position = {
+	x: 200,
+	y: 200
+};
+
 io.on('connection', (socket) => {
 	/*
 	 *  ✨ Handle new connected client
@@ -35,6 +43,28 @@ io.on('connection', (socket) => {
 	// Emit the updated client list to *ALL* connected clients.
 	io.emit('update_clients', clients)
 
+	// Emit Brick Position
+	socket.emit("position", position);
+	socket.on("move", data => {
+		switch(data) {
+			case "left":
+				position.x -= 5;
+				io.emit("position", position);
+				break;
+			case "right":
+				position.x += 5;
+				io.emit("position", position);
+				break;
+			case "up":
+				position.y -= 5;
+				io.emit("position", position);
+				break;
+			case "down":
+				position.y += 5;
+				io.emit("position", position);
+				break;
+		}
+	})
 	// Emit the current counter *ONLY* to the new connected client.
 	// Refer to https://socket.io/docs/emit-cheatsheet/ for the difference
 	// of `io.emit` and `socket.emit`
