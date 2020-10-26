@@ -1,3 +1,4 @@
+const cv = require('opencv4nodejs')
 const express = require('express')
 const port = process.env.PORT || 3000
 var app = require('express')()
@@ -15,6 +16,11 @@ app.get(/.*/, (req, res) => {
 http.listen(port, () => {
 	console.log(`Listening on port ${port}`)
 })
+
+
+const wCap = new cv.VideoCapture(0)
+wCap.set(cv.CAP_PROP_FRAME_WIDTH, 200)
+wCap.set(cv.CAP_PROP_FRAME_HEIGHT, 200)
 
 /*
  *  Store connected clients etc.
@@ -42,6 +48,13 @@ io.on('connection', (socket) => {
 
 	// Emit the updated client list to *ALL* connected clients.
 	io.emit('update_clients', clients)
+
+
+	setInterval(() => {
+		const frame = wCap.read()
+		const image = cv.imencode('.jpg', frame).toString('base64')
+		io.emit('image',image)
+	}, 1000)
 
 	// Emit Brick Position
 	socket.emit("position", position);
