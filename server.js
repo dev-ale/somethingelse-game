@@ -31,6 +31,49 @@ var position = {
 	y: 200
 };
 
+var currentQuestion = null;
+
+var questions = [
+	{
+		"category":"General Knowledge",
+		"type":"multiple",
+		"difficulty":"easy",
+		"question":"Which sign of the zodiac is represented by the Crab?",
+		"correct_answer":"Cancer",
+		"incorrect_answers":[
+			"Libra",
+			"Virgo",
+			"Sagittarius"
+		]
+	},
+	{
+		"category":"General Knowledge",
+		"type":"multiple",
+		"difficulty":"easy",
+		"question":"What is the name of the Jewish New Year?",
+		"correct_answer":"Rosh Hashanah",
+		"incorrect_answers":[
+			"Elul",
+			"New Year",
+			"Succoss"
+		]
+	},
+	{
+		"category":"General Knowledge",
+		"type":"multiple",
+		"difficulty":"easy",
+		"question":"What is the Spanish word for &quot;donkey&quot;?",
+		"correct_answer":"Burro",
+		"incorrect_answers":[
+			"Caballo",
+			"Toro",
+			"Perro"
+		]
+	}
+]
+
+
+
 io.on('connection', (socket) => {
 	/*
 	 *  ✨ Handle new connected client
@@ -74,6 +117,18 @@ io.on('connection', (socket) => {
 	/*
 	 *  👂 Listen to socket events emitted from vue components
 	 */
+
+	socket.on('next_question', () => {
+
+		currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+		let allAnswers = []
+		allAnswers.push(currentQuestion.incorrect_answers)
+		allAnswers[0].push(currentQuestion.correct_answer)
+		currentQuestion.allAnswers = allAnswers[0];
+
+		io.emit('update_question', currentQuestion)
+	})
+
 
 	// Listen to increment_counter event, fired by `increment()` in 'Counter.vue'
 	socket.on('increment_counter', () => {

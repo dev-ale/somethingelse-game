@@ -3,41 +3,24 @@
   <div align="center" v-if="currentQuestion">
     <h1>Questions</h1>
     <h3>{{ currentQuestion.question }}</h3>
-
     <v-list>
-      <v-list-item-group
-          v-model="model"
-          mandatory
-          color="indigo"
-      >
         <v-btn
             class="ma-2"
-            color="primary"
+            color="green"
+            dark
             v-for="answers in currentQuestion.allAnswers"
             :key="answers"
             @click="guess(answers)"
         >{{ answers }}
         </v-btn>
-      </v-list-item-group>
     </v-list>
-
-    <!--<v-btn
-        v-for="incorrect_answers in currentQuestion.incorrect_answers"
-        :key="incorrect_answers"
-        @click="guess('wrong')"
-    >
-      {{ incorrect_answers }}
-    </v-btn>
-
-    <v-btn
-        @click="guess('correct')"
-    >{{ currentQuestion.correct_answer }}
-    </v-btn>-->
 
   </div>
   <br>
   <div align="center">
-    <v-btn @click="nextQuestion()">Next Question</v-btn>
+    <br>
+    <v-btn v-if="currentQuestion === null" color="green" dark class="ma-2" @click="getServerQuestion()">Start</v-btn>
+    <v-btn v-if="currentQuestion" color="green" dark class="ma-2" @click="getServerQuestion()">Next</v-btn>
   </div>
 
 </div>
@@ -45,7 +28,6 @@
 </template>
 
 <script>
-import {shuffleArray} from "face-api.js/build/es6";
 
 export default {
   data: () => ({
@@ -174,25 +156,28 @@ export default {
     ]
   }),
   methods: {
-    nextQuestion() {
-      this.currentQuestion = this.questions[Math.floor(Math.random() * this.questions.length)];
-      console.log(this.currentQuestion)
-      let allAnswers = []
-      allAnswers.push(this.currentQuestion.incorrect_answers)
-      allAnswers[0].push(this.currentQuestion.correct_answer)
-      console.log(allAnswers)
-      allAnswers = shuffleArray(allAnswers[0])
-      this.currentQuestion.allAnswers = allAnswers;
-
+    getServerQuestion() {
+      console.log("getServerQuestion")
+      this.$socket.client.emit('next_question')
     },
+
     guess(option) {
       if (option === this.currentQuestion.correct_answer) {
         alert("correct");
-        this.nextQuestion()
+        this.getServerQuestion()
       }else {
         alert("wrong");
-        this.nextQuestion()
+        this.getServerQuestion()
       }
+    }
+  },
+  sockets: {
+    /*
+     * 👂 Listen to socket events emitted from the socket server
+     */
+    update_question(question) {
+      this.currentQuestion = question
+      console.log(question)
     }
   },
   name: "Questions"
