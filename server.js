@@ -31,6 +31,10 @@ var position = {
 	y: 200
 };
 
+var player1Score = 0;
+var player2Score = 0;
+
+
 var currentQuestion = null;
 
 var questions = [
@@ -120,6 +124,8 @@ io.on('connection', (socket) => {
 
 	socket.on('next_question', () => {
 
+		//TODO: Fehler beim erstellen des allAnswer Arrays, es wird jedesmal die korrekte Lösung hinzugefügt...
+
 		currentQuestion = questions[Math.floor(Math.random() * questions.length)];
 		let allAnswers = []
 		allAnswers.push(currentQuestion.incorrect_answers)
@@ -127,6 +133,30 @@ io.on('connection', (socket) => {
 		currentQuestion.allAnswers = allAnswers[0];
 
 		io.emit('update_question', currentQuestion)
+	})
+
+
+	socket.emit('update_score1', player1Score)
+	socket.emit('update_score2', player2Score)
+
+	socket.on('increment_score1', () => {
+		player1Score ++
+		socket.emit('update_score1',player1Score)
+	})
+
+	socket.on('increment_score2', () => {
+		player2Score ++
+		socket.emit('update_score2',player2Score)
+	})
+
+	socket.on('reset_score1', () => {
+		player1Score = 0
+		socket.emit('update_score1',player1Score)
+	})
+
+	socket.on('reset_score2', () => {
+		player2Score = 0
+		socket.emit('update_score2',player2Score)
 	})
 
 

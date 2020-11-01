@@ -22,6 +22,18 @@
     <v-btn v-if="currentQuestion === null" color="green" dark class="ma-2" @click="getServerQuestion()">Start</v-btn>
     <v-btn v-if="currentQuestion" color="green" dark class="ma-2" @click="getServerQuestion()">Next</v-btn>
   </div>
+  <v-container>
+    <v-row>
+      <v-col md="4">
+        <h3 class="blue--text">Player 1</h3>
+        <h1>{{player1Score}}</h1>
+      </v-col>
+      <v-col md="4" offset-md="4">
+        <h3 class="red--text">Player 2</h3>
+        <h1>{{player2Score}}</h1>
+      </v-col>
+    </v-row>
+  </v-container>
 
 </div>
 
@@ -32,128 +44,8 @@
 export default {
   data: () => ({
     currentQuestion: null,
-    questions: [
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"In past times, what would a gentleman keep in his fob pocket?",
-            "correct_answer":"Watch",
-            "incorrect_answers":[
-              "Money",
-              "Keys",
-              "Notebook"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"Area 51 is located in which US state?",
-            "correct_answer":"Nevada",
-            "incorrect_answers":[
-              "Arizona",
-              "New Mexico",
-              "Utah"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"Which sign of the zodiac is represented by the Crab?",
-            "correct_answer":"Cancer",
-            "incorrect_answers":[
-              "Libra",
-              "Virgo",
-              "Sagittarius"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"What is the name of the Jewish New Year?",
-            "correct_answer":"Rosh Hashanah",
-            "incorrect_answers":[
-              "Elul",
-              "New Year",
-              "Succoss"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"What is the Spanish word for &quot;donkey&quot;?",
-            "correct_answer":"Burro",
-            "incorrect_answers":[
-              "Caballo",
-              "Toro",
-              "Perro"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"Which of the following presidents is not on Mount Rushmore?",
-            "correct_answer":"John F. Kennedy",
-            "incorrect_answers":[
-              "Theodore Roosevelt",
-              "Abraham Lincoln",
-              "Thomas Jefferson"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"What is Tasmania?",
-            "correct_answer":"An Australian State",
-            "incorrect_answers":[
-              "A flavor of Ben and Jerry&#039;s ice-cream",
-              "A Psychological Disorder",
-              "The Name of a Warner Brothers Cartoon Character"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"The likeness of which president is featured on the rare $2 bill of USA currency?",
-            "correct_answer":"Thomas Jefferson",
-            "incorrect_answers":[
-              "Martin Van Buren",
-              "Ulysses Grant",
-              "John Quincy Adams"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"What is the name of NASA&rsquo;s most famous space telescope?",
-            "correct_answer":"Hubble Space Telescope",
-            "incorrect_answers":[
-              "Big Eye",
-              "Death Star",
-              "Millenium Falcon"
-            ]
-          },
-          {
-            "category":"General Knowledge",
-            "type":"multiple",
-            "difficulty":"easy",
-            "question":"Which country has the union jack in its flag?",
-            "correct_answer":"New Zealand",
-            "incorrect_answers":[
-              "South Africa",
-              "Canada",
-              "Hong Kong"
-            ]
-          }
-    ]
+    player1Score: 0,
+    player2Score: 0
   }),
   methods: {
     getServerQuestion() {
@@ -165,6 +57,7 @@ export default {
       if (option === this.currentQuestion.correct_answer) {
         alert("correct");
         this.getServerQuestion()
+        this.$socket.client.emit('increment_score1')
       }else {
         alert("wrong");
         this.getServerQuestion()
@@ -175,9 +68,14 @@ export default {
     /*
      * 👂 Listen to socket events emitted from the socket server
      */
+    update_score1(score1) {
+      this.player1Score = score1
+    },
+    update_score2(score2) {
+      this.player1Score = score2
+    },
     update_question(question) {
       this.currentQuestion = question
-      console.log(question)
     }
   },
   name: "Questions"
