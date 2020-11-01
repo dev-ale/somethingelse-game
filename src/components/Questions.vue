@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-if="currentQuestion">
+  <div align="center" v-if="currentQuestion">
     <h1>Questions</h1>
     <h3>{{ currentQuestion.question }}</h3>
 
@@ -11,6 +11,8 @@
           color="indigo"
       >
         <v-btn
+            class="ma-2"
+            color="primary"
             v-for="answers in currentQuestion.allAnswers"
             :key="answers"
             @click="guess(answers)"
@@ -34,7 +36,10 @@
 
   </div>
   <br>
-  <button @click="nextQuestion()">Next Question</button>
+  <div align="center">
+    <v-btn @click="nextQuestion()">Next Question</v-btn>
+  </div>
+
 </div>
 
 </template>

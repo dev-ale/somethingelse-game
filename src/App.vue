@@ -12,6 +12,7 @@
           <Counter />
           <BlockGame/>
         </div>
+        <br>
         <Questions/>
       </div>
     </div>
