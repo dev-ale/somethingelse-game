@@ -6,9 +6,8 @@
             :style="isConnected ? 'color: green' : 'color: red'"
             v-html="`Connected: ${isConnected}`"
         />
-        <ClientList />
-
         <div hidden>
+          <ClientList />
           <Counter />
           <BlockGame/>
         </div>
