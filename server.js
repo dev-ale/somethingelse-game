@@ -34,6 +34,8 @@ var position = {
 var player1Score = 0;
 var player2Score = 0;
 
+var player1selected = false;
+var player2selected = false;
 
 var currentQuestion = null;
 
@@ -135,6 +137,17 @@ io.on('connection', (socket) => {
 		io.emit('update_question', currentQuestion)
 	})
 
+	socket.emit('update_player1', player1selected)
+	socket.emit('update_player2', player2selected)
+
+	socket.on('select_player1', () => {
+		player1selected = true
+		socket.emit('update_player1', player1selected)
+	})
+	socket.on('select_player2', () => {
+		player2selected = true
+		socket.emit('update_player2', player2selected)
+	})
 
 	socket.emit('update_score1', player1Score)
 	socket.emit('update_score2', player2Score)
