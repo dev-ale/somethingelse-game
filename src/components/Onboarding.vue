@@ -10,8 +10,17 @@
     <br>
     <v-text-field v-if="!game && joinChosen && username" label="game id" v-model="gameId"></v-text-field>
     <v-btn class="ma-2" v-if="!game && joinChosen && username" x-large color="primary" @click="joinGame">Join Game</v-btn>
+    <v-badge
+        content="copied"
+        v-if="showCopyAlert"
+        color="success"
+    >
+    </v-badge>
     <div v-if="game">
-      <h2>Game ID <span class="green--text">{{game.id}}</span></h2>
+      <h2>Game ID <span style="cursor: pointer" @click="copyText" class="green--text">{{game.id}}</span></h2>
+
+
+
       <br>
       <h3>Connected Players: {{game.clients.length}}</h3>
       <v-list v-for="clientId in game.clients" :key="clientId">
@@ -32,9 +41,15 @@ export default {
     game: null,
     username: null,
     gameId: null,
-    joinChosen: false
+    joinChosen: false,
+    showCopyAlert: false
   }),
   methods: {
+    copyText() {
+      this.showCopyAlert = true;
+      setTimeout(() => this.showCopyAlert = false, 1000);
+      navigator.clipboard.writeText(this.game.id);
+    },
 
     newGame() {
       this.$socket.client.emit('create_game',this.username)

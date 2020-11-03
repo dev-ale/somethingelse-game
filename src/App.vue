@@ -22,7 +22,7 @@
 import ClientList from './components/ClientList.vue'
 import Counter from './components/Counter.vue'
 import BlockGame from "@/components/BlockGame"
-import Questions from "@/components/Questions"
+import Questions from "@/components/Onboarding"
 import Game from "@/components/Game";
 export default {
   name: 'App',
