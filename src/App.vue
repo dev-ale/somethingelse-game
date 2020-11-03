@@ -2,11 +2,12 @@
   <v-app>
     <div id="app">
       <div class="container">
-        <h3
-            :style="isConnected ? 'color: green' : 'color: red'"
-            v-html="`Connected: ${isConnected}`"
-        />
+        <h1>sdent - somethingelse</h1>
         <div hidden>
+          <h3
+              :style="isConnected ? 'color: green' : 'color: red'"
+              v-html="`Connected: ${isConnected}`"
+          />
           <ClientList />
           <Counter />
           <BlockGame/>
