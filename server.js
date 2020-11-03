@@ -23,12 +23,14 @@ http.listen(port, () => {
 io.on('connection', (socket) => {
 	console.log(`Client ${socket.id} connected to the server.`)
 
-	socket.on('new_game', (clientId) => {
+	socket.on('create_game', (username) => {
 		const gameId = Math.random().toString(36).substring(2,8);
 		game = {
 			"id": gameId,
 			"questions": questions,
-			"clients": [clientId]
+			"clients": [username],
+			"status": "waiting",
+			"clientsReady": []
 		}
 
 		socket.emit('update_game', game)
@@ -38,13 +40,22 @@ io.on('connection', (socket) => {
 	socket.on('join_game', (gameId, username) => {
 		if (game.id === gameId) {
 			game.clients.push(username)
-			console.log("pushed username")
-			console.log(game.clients)
+			console.log(username + " joined Game, new Palyers: " + game.clients)
 		}else {
-			console.log("not found")
+			console.log("not found or already enough players")
+			game = null
 		}
 		io.emit('update_game', game)
-		console.log("Game updatet: " + game)
+	})
+
+	socket.on('start_game', (gameId, username) => {
+		game.clientsReady.push(username)
+		console.log(game.clientsReady +" is ready")
+
+		if (game.clientsReady.length === 2) {
+			game.status = "started"
+		}
+		io.emit('update_game', game)
 	})
 
 
