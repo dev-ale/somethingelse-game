@@ -5,8 +5,14 @@
         @click.prevent="increment()"
         v-html="'Increment'"
         style="font-size: 1.25em"
-    >
-    </v-btn>
+    ></v-btn>
+    <br>
+
+    <v-btn
+        @click.prevent="reset()"
+        v-html="'Reset'"
+        style="font-size: 1.25em"
+    ></v-btn>
 
 	</div>
 </template>
@@ -25,7 +31,10 @@ export default {
 		 */
 		increment() {
 			this.$socket.client.emit('increment_counter')
-		}
+		},
+    reset() {
+      this.$socket.client.emit('reset_counter')
+    }
 	},
 	sockets: {
 		/*

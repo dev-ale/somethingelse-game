@@ -1,29 +1,44 @@
 <template>
-  <div id="app">
-    <div class="container">
-      <h3
-          :style="isConnected ? 'color: green' : 'color: red'"
-          v-html="`Connected: ${isConnected}`"
-      />
-      <ClientList />
-      <Counter />
+  <v-app>
+    <div id="app">
+      <div class="container">
+        <h1>sdent - <span class="red--text">somethingelse</span></h1>
+        <div hidden>
+          <h3 :style="isConnected ? 'color: green' : 'color: red'" v-html="`Connected: ${isConnected}`"/>
+          <ClientList />
+          <Counter />
+          <BlockGame/>
+        </div>
+        <br>
+        <Questions v-if="!started"></Questions>
+        <Game v-if="started"></Game>
+      </div>
     </div>
-  </div>
+  </v-app>
+
 </template>
 
 <script>
 import ClientList from './components/ClientList.vue'
 import Counter from './components/Counter.vue'
+import BlockGame from "@/components/BlockGame"
+import Questions from "@/components/Onboarding"
+import Game from "@/components/Game";
 export default {
   name: 'App',
   data() {
     return {
-      isConnected: false
+      isConnected: false,
+      game: null,
+      started: false
     }
   },
   components: {
+    Game,
+    BlockGame,
     ClientList,
-    Counter
+    Counter,
+    Questions
   },
   sockets: {
     /*
@@ -32,7 +47,14 @@ export default {
     connect() {
       console.log('Connected to the socket server.')
       this.isConnected = true
-    }
+    },
+    update_game(game) {
+      this.game = game
+      console.log("new game state received")
+      if (game.status === "started") {
+        this.started = true
+      }
+    },
   }
 }
 </script>

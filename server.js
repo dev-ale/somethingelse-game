@@ -12,43 +12,63 @@ app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + '/dist/index.html')
 })
 
+let game = {};
+let clients  = []
+let questions = 10
+
 http.listen(port, () => {
 	console.log(`Listening on port ${port}`)
 })
 
-/*
- *  Store connected clients etc.
- *  Do not use in production 🤪
- */
-var clients = []
-var counter = 0
-
 io.on('connection', (socket) => {
-	/*
-	 *  ✨ Handle new connected client
-	 */
 	console.log(`Client ${socket.id} connected to the server.`)
 
-	// Push new connected socket to socketList
-	clients.push({ id: socket.id })
+	socket.on('create_game', (username) => {
+		const gameId = Math.random().toString(36).substring(2,8);
+		game = {
+			"id": gameId,
+			"questions": questions,
+			"clients": [username],
+			"status": "waiting",
+			"clientsReady": []
+		}
 
-	// Emit the updated client list to *ALL* connected clients.
-	io.emit('update_clients', clients)
-
-	// Emit the current counter *ONLY* to the new connected client.
-	// Refer to https://socket.io/docs/emit-cheatsheet/ for the difference
-	// of `io.emit` and `socket.emit`
-	socket.emit('update_counter', counter)
-
-	/*
-	 *  👂 Listen to socket events emitted from vue components
-	 */
-
-	// Listen to increment_counter event, fired by `increment()` in 'Counter.vue'
-	socket.on('increment_counter', () => {
-		counter += 1
-		io.emit('update_counter', counter)
+		socket.emit('update_game', game)
+		console.log("New Game created: " + game.id + " (" + game.questions + " Questions)")
 	})
+
+	socket.on('join_game', (gameId, username) => {
+		if (game.id === gameId) {
+			game.clients.push(username)
+			console.log(username + " joined Game, new Palyers: " + game.clients)
+		}else {
+			console.log("not found or already enough players")
+			game = null
+		}
+		io.emit('update_game', game)
+	})
+
+	socket.on('start_game', (gameId, username) => {
+		game.clientsReady.push(username)
+		console.log(game.clientsReady +" is ready")
+
+		if (game.clientsReady.length === 2) {
+			game.status = "started"
+		}
+		io.emit('update_game', game)
+	})
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Listen to disconnect event. 'disconnecting' is a reserved event,
 	// again refer to https://socket.io/docs/emit-cheatsheet/
