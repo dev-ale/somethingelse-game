@@ -35,6 +35,19 @@ io.on('connection', (socket) => {
 		console.log("New Game created: " + game.id + " (" + game.questions + " Questions)")
 	})
 
+	socket.on('join_game', (gameId, username) => {
+		if (game.id === gameId) {
+			game.clients.push(username)
+			console.log("pushed username")
+		}else {
+			console.log("not found")
+		}
+
+
+		socket.emit('update_game', game)
+		console.log("Game updatet: " + game)
+	})
+
 
 
 
