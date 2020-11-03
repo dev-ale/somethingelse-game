@@ -18,9 +18,6 @@
     </v-badge>
     <div v-if="game">
       <h2>Game ID <span style="cursor: pointer" @click="copyText" class="green--text">{{game.id}}</span></h2>
-
-
-
       <br>
       <h3>Connected Players: {{game.clients.length}}</h3>
       <v-list v-for="clientId in game.clients" :key="clientId">
@@ -29,6 +26,12 @@
         </v-list-item>
       </v-list>
       <v-btn x-large dark color="red" v-if="game.clients.length >= 2" @click="startGame"> start game</v-btn>
+      <br>
+      <div style="align-content: center">
+        <p v-if="game.clients.length >= 2 && !playerIsReady" class="red--text">Starte das Spiel, wenn du bereit bist.</p>
+        <p v-if="game.clientsReady.length >= 1 && playerIsReady" class="red--text">Warten auf andere...</p>
+      </div>
+
     </div>
   </div>
 </template>
@@ -42,7 +45,8 @@ export default {
     username: null,
     gameId: null,
     joinChosen: false,
-    showCopyAlert: false
+    showCopyAlert: false,
+    playerIsReady: false
   }),
   methods: {
     copyText() {
@@ -61,6 +65,7 @@ export default {
 
     startGame() {
       this.$socket.client.emit('start_game',this.gameId,this.username)
+      this.playerIsReady = true
     }
 
   },
