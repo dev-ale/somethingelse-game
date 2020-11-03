@@ -1,11 +1,17 @@
 <template>
   <div>
-    <v-btn v-if="!game" x-large color="green" @click="newGame">New Game</v-btn>
+    <v-text-field v-if="!game" label="username" v-model="username"></v-text-field>
+    <v-btn v-if="!game && username" x-large color="green" @click="newGame">New Game</v-btn>
     <div v-if="game">
       <h2>Game ID</h2>
       <h2> {{game.id}}</h2>
       <br>
       <h3>Connected Clients: {{game.clients.length}}</h3>
+      <v-list v-for="clientId in game.clients" :key="clientId">
+        <v-list-item>
+          {{ clientId }}
+        </v-list-item>
+      </v-list>
     </div>
   </div>
 </template>
@@ -15,14 +21,13 @@
 export default {
   data: () => ({
     counter: null,
-    game: null
+    game: null,
+    username: null
   }),
   methods: {
-    increment() {
-      this.$socket.client.emit('increment_counter')
-    },
+
     newGame() {
-      this.$socket.client.emit('new_game')
+      this.$socket.client.emit('new_game',this.username)
     }
 
   },
@@ -30,12 +35,14 @@ export default {
     /*
      * 👂 Listen to socket events emitted from the socket server
      */
+    connect(socket) {
+      console.log("check" + socket)
+    },
+
     update_game(game) {
       this.game = game
-     },
-    update_counter(counter) {
-      this.counter = counter
     }
+
   },
   name: "Questions"
   }

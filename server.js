@@ -14,7 +14,6 @@ app.get(/.*/, (req, res) => {
 
 let game = {};
 let clients  = []
-let counter = 0
 let questions = 10
 
 http.listen(port, () => {
@@ -24,23 +23,14 @@ http.listen(port, () => {
 io.on('connection', (socket) => {
 	console.log(`Client ${socket.id} connected to the server.`)
 
-
-	// Update counter value
-	socket.emit('update_counter', counter)
-
-	// Listen to increment_counter event, fired by `increment()` in 'Counter.vue'
-	socket.on('increment_counter', () => {
-		counter += 1
-		io.emit('update_counter', counter)
-	})
-
-	socket.on('new_game', () => {
+	socket.on('new_game', (clientId) => {
 		const gameId = Math.random().toString(36).substring(2,8);
 		game = {
 			"id": gameId,
 			"questions": questions,
-			"clients": []
+			"clients": [clientId]
 		}
+
 		socket.emit('update_game', game)
 		console.log("New Game created: " + game.id + " (" + game.questions + " Questions)")
 	})
