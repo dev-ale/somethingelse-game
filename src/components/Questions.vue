@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-text-field v-if="!game" label="username" v-model="username"></v-text-field>
-    <v-btn v-if="!game && username" x-large color="green" @click="newGame">New Game</v-btn>
+
+    <!--Button only shows when username is not empty
+    Button disapears when game Object is defined-->
+    <v-btn class="ma-2" dark v-if="!game && username" x-large color="green" @click="newGame">New Game</v-btn>
+    <br>
+    <v-btn class="ma-2" v-if="!game && username" x-large color="primary" @click="newGame">Join Game</v-btn>
     <div v-if="game">
       <h2>Game ID</h2>
       <h2> {{game.id}}</h2>
