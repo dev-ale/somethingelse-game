@@ -39,12 +39,11 @@ io.on('connection', (socket) => {
 		if (game.id === gameId) {
 			game.clients.push(username)
 			console.log("pushed username")
+			console.log(game.clients)
 		}else {
 			console.log("not found")
 		}
-
-
-		socket.emit('update_game', game)
+		io.emit('update_game', game)
 		console.log("Game updatet: " + game)
 	})
 

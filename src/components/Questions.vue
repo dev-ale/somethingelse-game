@@ -51,7 +51,8 @@ export default {
 
     update_game(game) {
       this.game = game
-    }
+      console.log("new game state received")
+    },
 
   },
   name: "Questions"
