@@ -1,9 +1,13 @@
 <template>
   <v-app>
     <div id="app">
-      <h1 class="text-h1 font-weight-bold mb-16">
+      <h1 class="text-h1 font-weight-bold mb-16 hidden-xs-only">
         something<span class="red--text">else</span>
       </h1>
+      <h1 class="text-h2 font-weight-bold mb-16 hidden-sm-and-up">
+        something<span class="red--text">else</span>
+      </h1>
+      <br>
       <div v-if="hasVideoAccess">
         <v-row>
           <v-col>

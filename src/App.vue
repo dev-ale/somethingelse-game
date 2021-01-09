@@ -1,5 +1,16 @@
 <template>
   <v-app id="app">
+    <v-app-bar
+        absolute
+        color="transparent"
+        elevate-on-scroll
+    >
+      <v-spacer></v-spacer>
+      <v-btn icon href="https://github.com/alejandro-garcia-fhnw/fhnw-sdent-somethingelse">
+        <v-icon large class="mr-3" color="#2c3e50">mdi-github</v-icon>
+      </v-btn>
+    </v-app-bar>
+
     <Onboarding v-if="state == State.Onboard"
                 @start-tutorial="state = State.Tutorial"
                 @start-game="state = State.Game"
