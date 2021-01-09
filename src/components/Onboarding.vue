@@ -33,12 +33,10 @@
 
       </div>
       <div class="container" v-if="!hasVideoAccess">
-        <lottie-animation class="mb-4" :width="100" :height="100" path="animations/face.json"/>
+        <lottie-animation class="mb-4" :width="150" :height="150" path="animations/face.json"/>
         <h2>
           Please allow
-          <span class="font-weight-bold">something
-            <span class="red--text">else</span>
-          </span>
+          <span class="font-weight-bold">something<span class="red--text">else</span></span>
           to access your camera.
         </h2>
         <p>Page reloads every 10 seconds ...</p>

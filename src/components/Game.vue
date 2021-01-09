@@ -5,7 +5,7 @@
     </h1>
     <v-progress-circular indeterminate color="red" :size="70" :width="7"
         v-if="!loaded"/>
-    <div class="container" v-show="loaded">
+    <template v-show="loaded">
       <Score class="mb-16" :score="score"></Score>
       <Detect ref="detect"
           class="mb-5"
@@ -20,7 +20,7 @@
             @click="capturePhoto" width="250" height="250"
             autoplay muted playsinline/>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -118,6 +118,6 @@ export default {
   border-radius: 50%;
   margin: 20px;
   object-fit: cover;
-  object-position: center right;
+  object-position: center;
 }
 </style>
