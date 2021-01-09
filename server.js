@@ -16,184 +16,188 @@ http.listen(port, () => {
 	console.log(`Listening on port ${port}`)
 })
 
-/*
- *  Store connected clients etc.
- *  Do not use in production 🤪
- */
-var clients = []
-var counter = 0
 
-/*
- * Init Position of the Brick
- */
-var position = {
-	x: 200,
-	y: 200
+let clients = [];
+let game = {
+	"id": null,
+	"questions": 10,
+	"clients": [],
+	"state": null,
+	"clientsReady": []
 };
+let games = [];
 
-var player1Score = 0;
-var player2Score = 0;
-
-var player1selected = false;
-var player2selected = false;
-
-var currentQuestion = null;
-
-var questions = [
-	{
-		"category":"General Knowledge",
-		"type":"multiple",
-		"difficulty":"easy",
-		"question":"Which sign of the zodiac is represented by the Crab?",
-		"correct_answer":"Cancer",
-		"incorrect_answers":[
-			"Libra",
-			"Virgo",
-			"Sagittarius"
-		]
-	},
-	{
-		"category":"General Knowledge",
-		"type":"multiple",
-		"difficulty":"easy",
-		"question":"What is the name of the Jewish New Year?",
-		"correct_answer":"Rosh Hashanah",
-		"incorrect_answers":[
-			"Elul",
-			"New Year",
-			"Succoss"
-		]
-	},
-	{
-		"category":"General Knowledge",
-		"type":"multiple",
-		"difficulty":"easy",
-		"question":"What is the Spanish word for &quot;donkey&quot;?",
-		"correct_answer":"Burro",
-		"incorrect_answers":[
-			"Caballo",
-			"Toro",
-			"Perro"
-		]
-	}
-]
-
-
+http.listen(port, () => {
+	console.log(`Listening on port ${port}`)
+})
 
 io.on('connection', (socket) => {
-	/*
-	 *  ✨ Handle new connected client
-	 */
-	console.log(`Client ${socket.id} connected to the server.`)
 
-	// Push new connected socket to socketList
-	clients.push({ id: socket.id })
+	console.log(`Client ${socket.id} connected to the server.`);
+	clients.push(socket);
+	console.log("Clients: " + clients.length);
 
-	// Emit the updated client list to *ALL* connected clients.
-	io.emit('update_clients', clients)
+	// create Game
+	socket.on('create_game', (gameId, username) => {
+		game = {
+			"id": gameId,
+			"questions": 10,
+			"clients": [username],
+			"state": "created",
+			"clientsReady": []
+		}
 
+		games.push(game);
+		console.log(games)
+		socket.join(gameId);
+		io.to(gameId).emit('update_gameState', game);
 
-	// Emit Brick Position
-	socket.emit("position", position);
-	socket.on("move", data => {
-		switch(data) {
-			case "left":
-				position.x -= 5;
-				io.emit("position", position);
-				break;
-			case "right":
-				position.x += 5;
-				io.emit("position", position);
-				break;
-			case "up":
-				position.y -= 5;
-				io.emit("position", position);
-				break;
-			case "down":
-				position.y += 5;
-				io.emit("position", position);
-				break;
+	})
+
+	// delete created game
+	socket.on('cancel_game', (gameId, username) => {
+		if (game.id === gameId) {
+			game = {};
+			game.state = null;
+
+			// Remove game Object from games Array
+			let foundGames = games.filter((game) => {
+				return game.id === gameId
+			})
+			console.log(games)
+			if (foundGames.length === 1) {
+				let actualGame = foundGames[0]
+				let index = games.indexOf(actualGame);
+				games.splice(index, 1);
+				console.log(games)
+			}
+
+			socket.join(gameId);
+			io.to(gameId).emit('update_gameState', game);
+			console.log(username + " deleted the Game: " + gameId);
+		}else {
+			console.log("Game ID not found, nothing to delete....");
 		}
 	})
-	// Emit the current counter *ONLY* to the new connected client.
-	// Refer to https://socket.io/docs/emit-cheatsheet/ for the difference
-	// of `io.emit` and `socket.emit`
-	socket.emit('update_counter', counter)
 
-	/*
-	 *  👂 Listen to socket events emitted from vue components
-	 */
+	// join existing game Max 2 Player
+	socket.on('search_game', (gameId, username) => {
+		if (username && gameId) {
+			let foundGame = games.filter((game) => {
+				return game.id === gameId
+			})
+			console.log(foundGame)
+			if (foundGame.length > 0) {
+				game = foundGame[0];
+				game.clients.push(username)
+				game.state = "full"
+				// Todo: check games for actual game and update it
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+			}else {
+				socket.emit('alert_client','No Game Found');
+				console.log("no game with given gameId found")
+			}
 
-	socket.on('next_question', () => {
-
-		//TODO: Fehler beim erstellen des allAnswer Arrays, es wird jedesmal die korrekte Lösung hinzugefügt...
-
-		currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-		let allAnswers = []
-		allAnswers.push(currentQuestion.incorrect_answers)
-		allAnswers[0].push(currentQuestion.correct_answer)
-		currentQuestion.allAnswers = allAnswers[0];
-
-		io.emit('update_question', currentQuestion)
+		}else{
+			socket.emit('alert_client','No GameID or Username given');
+			console.log("no gameId oder no username given")
+		}
+	})
+	// remove me from game
+	socket.on('remove_game', (gameId, username) => {
+		if (username && gameId) {
+			let foundGame = games.filter((game) => {
+				return game.id === gameId
+			})
+			if (foundGame.length > 0) {
+				game = foundGame[0];
+				game.clients.pop()
+				console.log(game)
+				let msg = username + ' left the game: ' + gameId;
+				socket.emit('alert_client',msg);
+				console.log(msg);
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+			}
+			else {
+				console.log("no game with given gameId found")
+			}
+		}
+		else {
+			console.log("no gameId oder no username given")
+		}
 	})
 
-	socket.emit('update_player1', player1selected)
-	socket.emit('update_player2', player2selected)
+	// start game
+	socket.on('start_game', (gameId, username) => {
 
-	socket.on('select_player1', () => {
-		player1selected = true
-		socket.emit('update_player1', player1selected)
+		let foundGame = games.filter((game) => {
+			return game.id === gameId
+		})
+		console.log(foundGame)
+		if (foundGame.length > 0) {
+			game = foundGame[0];
+			if (game.clientsReady.length === 0) {
+				game.clientsReady = [username]
+				game.state = "ready"
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+				console.log(game)
+			}
+			else if (game.clientsReady.length === 1) {
+				game.clientsReady.push(username)
+				game.state = "started"
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+				console.log(game)
+			}
+			else if (game.clientsReady.length === 2) {
+				game.state = "started"
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+				console.log(game)
+			}
+			else {
+				console.log('error')
+				game.clientsReady = []
+				game.state = "full"
+				socket.join(gameId);
+				io.to(gameId).emit('update_gameState', game);
+			}
+		}
+		else {
+			console.log("no game with given gameId found")
+		}
+		//io.to(gameId).emit('update_gameState', game);
 	})
-	socket.on('select_player2', () => {
-		player2selected = true
-		socket.emit('update_player2', player2selected)
-	})
+	// counter test
+	socket.on('counter', (gameId, username) => {
+		let foundGame = games.filter((game) => {
+			return game.id === gameId
+		})
+		if (foundGame.length > 0) {
+			game = foundGame[0];
+			console.log(username + ' pressed counter: ')
+			game.questions ++;
+			console.log(game.questions)
+			socket.join(gameId);
+			io.to(gameId).emit('update_gameState', game);
+		}else {
+			console.log("no game with given gameId found")
+		}
 
-	socket.emit('update_score1', player1Score)
-	socket.emit('update_score2', player2Score)
-
-	socket.on('increment_score1', () => {
-		player1Score ++
-		socket.emit('update_score1',player1Score)
-	})
-
-	socket.on('increment_score2', () => {
-		player2Score ++
-		socket.emit('update_score2',player2Score)
-	})
-
-	socket.on('reset_score1', () => {
-		player1Score = 0
-		socket.emit('update_score1',player1Score)
-	})
-
-	socket.on('reset_score2', () => {
-		player2Score = 0
-		socket.emit('update_score2',player2Score)
 	})
 
 
-	// Listen to increment_counter event, fired by `increment()` in 'Counter.vue'
-	socket.on('increment_counter', () => {
-		counter += 1
-		io.emit('update_counter', counter)
-	})
 
-	// Listen to reset_counter event, fired by `reset()` in 'Counter.vue'
-	socket.on('reset_counter', () => {
-		counter = 0
-		io.emit('update_counter', counter)
-	})
-
-	// Listen to disconnect event. 'disconnecting' is a reserved event,
-	// again refer to https://socket.io/docs/emit-cheatsheet/
 	socket.on('disconnecting', () => {
-		// Remove the disconnected client from the client list
+
 		clients = clients.filter((client) => {
 			return client.id != socket.id
 		})
-		// Emit the updated client list to all connected clients *EXCEPT* sender.
-		socket.broadcast.emit('update_clients', clients)
-		console.log(`Client ${socket.id} disconnected from the server.`)
+		console.log(`Client ${socket.id} disconnected from the server.`);
+		console.log("Clients: " + clients.length);
 	})
 })
+
