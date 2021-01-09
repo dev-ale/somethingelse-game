@@ -27,10 +27,6 @@ let game = {
 };
 let games = [];
 
-http.listen(port, () => {
-	console.log(`Listening on port ${port}`)
-})
-
 io.on('connection', (socket) => {
 
 	console.log(`Client ${socket.id} connected to the server.`);

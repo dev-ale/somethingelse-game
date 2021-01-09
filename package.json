@@ -17,7 +17,6 @@
     "opentdb-api": "^1.0.0",
     "surge": "^0.21.7",
     "vue-typed-js": "^0.1.2",
-    "@tensorflow/tfjs-node": "^2.6.0",
     "canvas": "^2.6.1",
     "core-js": "^3.6.5",
     "express": "^4.17.1",
