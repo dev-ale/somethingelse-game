@@ -1,75 +1,94 @@
 <template>
-  <v-app>
-    <div id="app">
-      <div class="container">
-        <h3
-            :style="isConnected ? 'color: green' : 'color: red'"
-            v-html="`Connected: ${isConnected}`"
-        />
-        <div hidden>
-          <ClientList />
-          <Counter />
-          <BlockGame/>
-        </div>
-        <br>
-        <Questions/>
-      </div>
-    </div>
+  <v-app id="app">
+    <Onboarding v-if="state == State.Onboard"
+                @start-tutorial="state = State.Tutorial"
+                @start-game="state = State.Game"
+                @start-multiplayer-game="state = State.Multiplayer"/>
+    <Tutorial v-if="state == State.Tutorial"
+              @end-tutorial="state = State.Onboard"
+              @start-game="startGame"/>
+    <Game v-if="state == State.Game"
+          @end-game="endGame"/>
+    <EndGame v-if="state == State.End"
+             :gameResult="gameResult"
+             @onboarding="state = State.Onboard"
+             @start-game="startGame"/>
+    <Multiplayer
+        v-if="state == State.Multiplayer"
+        @stop-multiplayer-game="state = State.Onboard"
+    ></Multiplayer>
   </v-app>
-
 </template>
 
 <script>
-import ClientList from './components/ClientList.vue'
-import Counter from './components/Counter.vue'
-import BlockGame from "@/components/BlockGame"
-import Questions from "@/components/Questions"
+import Tutorial from "@/components/Tutorial";
+import Game from "./components/Game.vue";
+import EndGame from "./components/EndGame.vue"
+import Onboarding from "@/components/Onboarding";
+import Multiplayer from "@/components/Multiplayer";
+
+const State = Object.freeze({
+  Onboard: 0,
+  Tutorial: 1,
+  Game: 2,
+  End: 3,
+  Multiplayer: 4
+});
+
 export default {
-  name: 'App',
-  data() {
-    return {
-      isConnected: false
-    }
-  },
-  components: {
-    BlockGame,
-    ClientList,
-    Counter,
-    Questions
-  },
-  sockets: {
-    /*
-     * 👂 Listen to socket events emitted from the socket server
-     */
-    connect() {
-      console.log('Connected to the socket server.')
-      this.isConnected = true
+  name: "App",
+  components: {Multiplayer, Onboarding, Tutorial, Game, EndGame },
+  data: () => ({
+    State,
+    state: State.Onboard,
+    gameResult: Object.freeze({})
+  }),
+  methods: {
+    setPhotos(photos) {
+      this.photos = photos;
+    },
+    startGame() {
+      this.photos = [];
+      this.state = State.Game;
+    },
+    startMultiplayerGame() {
+      this.state = State.Multiplayer;
+      console.log("asd")
+    },
+    endGame(gameResult) {
+      this.gameResult = gameResult || Object.freeze({});
+      this.state = State.End;
     }
   }
-}
+};
 </script>
 
 <style>
-body,
-html {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+#app {
+  align-content: center;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin: 0;
+  background-color: #f5f5f5;
+}
+ul {
+  list-style-type: none;
   padding: 0;
 }
-* {
-  box-sizing: border-box;
+h2 {
+  text-align: center;
 }
-#app {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.hidden {
+  display: none;
 }
+.green {
+  background-color: lightgreen;
+}
+.red {
+  background-color: orangered;
+}
+
 .container {
   display: flex;
   flex-direction: column;
