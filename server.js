@@ -12,6 +12,10 @@ app.get(/.*/, (req, res) => {
 	res.sendFile(__dirname + '/dist/index.html')
 })
 
+http.listen(port, () => {
+	console.log(`Listening on port ${port}`)
+})
+
 
 let clients = [];
 let game = {
