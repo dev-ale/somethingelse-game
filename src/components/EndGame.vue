@@ -1,22 +1,38 @@
 <template>
   <div align="center">
-    <h1 class="text-h3 font-weight-bold mt-8 mb-8">
-      game<span class="red--text">over</span>
-    </h1>
-    <Score :score="gameResult.score"></Score>
     <v-row>
-      <v-col lg12 v-for="(photo, index) in gameResult.photos" :key="index">
-          <div class="polaroid mt-8">
-            <p>Question {{ index + 1}}</p>
-            <img :src="photo" :alt="index" height="250"/>
-          </div>
+      <v-col>
+        <h1 class="text-h3 font-weight-bold mt-8 mb-8">
+          game<span class="red--text">over</span>
+        </h1>
       </v-col>
     </v-row>
-    <div class="mt-10 mb-10">
-      <v-btn class="mr-4" x-large @click="$emit('onboarding')">Back to Start</v-btn>
-      <v-btn class="mr-4" x-large @click="$emit('start-game')">Play again</v-btn>
-    </div>
-    <Leaderboard />
+    <v-row>
+      <v-col>
+          <v-btn class="mr-4" x-large @click="$emit('onboarding')">Back to Start</v-btn>
+          <v-btn class="mr-4" x-large @click="$emit('start-game')">Play again</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col sm-3>
+        <div style="width: 150px">
+          <Score :score="gameResult.score"></Score>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <Leaderboard />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col lg12 v-for="(photo, index) in gameResult.photos" :key="index">
+        <div class="polaroid mt-8">
+          <p>Question {{ index + 1}}</p>
+          <img :src="photo" :alt="index" height="250"/>
+        </div>
+      </v-col>
+    </v-row>
 <v-footer>
 
 </v-footer>

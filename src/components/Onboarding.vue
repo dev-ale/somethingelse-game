@@ -29,14 +29,15 @@
 
       </div>
       <div class="container" v-if="!hasVideoAccess">
-        <lottie-animation class="mb-4" :width="50" :height="50" path="animations/face.json"/>
-        <p>
+        <lottie-animation class="mb-4" :width="100" :height="100" path="animations/face.json"/>
+        <h2>
           Please allow
           <span class="font-weight-bold">something
             <span class="red--text">else</span>
           </span>
-          to access your camera. Page reloads every 10 seconds ...
-        </p>
+          to access your camera.
+        </h2>
+        <p>Page reloads every 10 seconds ...</p>
         <vue-typed-js :loop="true" :typeSpeed="50" :strings="['We do not use your images in any kind, promised!', 'We do not store your images in any kind, promised!']">
           <p class="mt-5 typing"></p>
         </vue-typed-js>
