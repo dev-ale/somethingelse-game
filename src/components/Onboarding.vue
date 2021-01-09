@@ -47,12 +47,11 @@
 </template>
 
 <script>
-import Leaderboard from "@/components/Leaderboard";
 import LottieAnimation from "lottie-vuejs/src/LottieAnimation.vue";
 
 export default {
   name: 'Onboarding',
-  components: { Leaderboard, LottieAnimation },
+  components: { LottieAnimation },
   data: () => ({
     hasVideoAccess: false
   }),
