@@ -2,7 +2,7 @@
   "name": "somethingelse",
   "version": "0.1.0",
   "engines": {
-    "node": "12.x"
+    "node": "18.x"
   },
   "private": true,
   "scripts": {
